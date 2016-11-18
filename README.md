@@ -1,6 +1,6 @@
 # 7GUIs in flimflam
 
-"7GUIs" is a programming usability benchmark for GUI libraries.
+[7GUIs](https://github.com/eugenkiss/7guis) is a programming usability benchmark for GUI libraries.
 
 Flimflam is a pattern for creating GUIs using functional programming.
 

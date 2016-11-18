@@ -1,0 +1,40 @@
+{
+  "name": "ff-7guis",
+  "version": "0.0.1",
+  "description": "FlimFlam 7GUIs implementations",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flimflamjs/7GUIs.git"
+  },
+  "keywords": [
+    "flimflam",
+    "7guis"
+  ],
+  "author": "jay r bolton <jayrbolton@gmail.com> (http://jayrbolton.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/flimflamjs/7GUIs/issues"
+  },
+  "homepage": "https://github.com/flimflamjs/7GUIs#readme",
+  "dependencies": {
+    "ff-core": "0.0.4",
+    "flyd": "0.2.2",
+    "ramda": "0.22.1",
+    "snabbdom": "0.5.4"
+  },
+  "devDependencies": {
+    "babel": "6.5.2",
+    "babelify": "7.3.0",
+    "browserify": "13.1.1",
+    "budo": "9.2.2",
+    "mocha": "3.1.2",
+    "zuul": "3.11.1"
+  }
+}

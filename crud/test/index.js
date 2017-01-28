@@ -1,83 +1,84 @@
-import snabbdom from 'snabbdom'
-import render from 'ff-core/render'
-import assert from 'assert'
-import {init, view} from '../'
-
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props'), require('snabbdom/modules/class')])
+const render = require('flimflam/render')
+const test = require('tape')
+const crud = require('../')
 
 function initComponent() {
-  let container = document.createElement('div')
-  let state = init()
-  let streams = render({state, container, patch, view})
+  var container = document.createElement('div')
+  var state = crud.init()
+  var streams = render(crud.view, state, container)
   streams.state = state
   return streams
 }
 
-suite('crud')
-
-test('when input is entered, people are filtered by surname', () => {
-  let streams = initComponent()
-  let inp = streams.dom$().querySelector('input.filter')
+test('when input is entered, people are filtered by surname', t => {
+  var streams = initComponent()
+  var inp = streams.dom$().querySelector('input.filter')
   inp.value = 'emil'
-  let ol = streams.dom$().querySelector('ol')
-  let ev = new Event('keyup')
+  var ol = streams.dom$().querySelector('ol')
+  var ev = new Event('keyup')
   inp.dispatchEvent(ev)
-  assert.equal(ol.textContent, 'Emil, Hans')
+  t.strictEqual(ol.textContent, 'Emil, Hans')
+  t.end()
 })
 
-test('when a row is clicked, the name and surname inputs are filled', () => {
-  let streams = initComponent()
-  let li = streams.dom$().querySelectorAll('li')[1]
-  let ev = new Event('click')
+test('when a row is clicked, the name and surname inputs are filled', t => {
+  var streams = initComponent()
+  var li = streams.dom$().querySelectorAll('li')[1]
+  var ev = new Event('click')
   li.dispatchEvent(ev)
-  let inp_name = streams.dom$().querySelector('input.name')
-  let inp_surname = streams.dom$().querySelector('input.surname')
-  assert.equal(`${inp_name.value} ${inp_surname.value}`, 'Max Mustermann')
+  var inp_name = streams.dom$().querySelector('input.name')
+  var inp_surname = streams.dom$().querySelector('input.surname')
+  t.strictEqual(`${inp_name.value} ${inp_surname.value}`, 'Max Mustermann')
+  t.end()
 })
 
-test('deselecting a selected row clears the inputs', () => {
-  let streams = initComponent()
-  let li = streams.dom$().querySelectorAll('li')[1]
-  let ev = new Event('click')
+test('deselecting a selected row clears the inputs', t => {
+  var streams = initComponent()
+  var li = streams.dom$().querySelectorAll('li')[1]
+  var ev = new Event('click')
   li.dispatchEvent(ev)
   li.dispatchEvent(ev)
-  let inp_name = streams.dom$().querySelector('input.name')
-  let inp_surname = streams.dom$().querySelector('input.surname')
-  assert.equal(inp_name.value + inp_surname.value, '')
+  var inp_name = streams.dom$().querySelector('input.name')
+  var inp_surname = streams.dom$().querySelector('input.surname')
+  t.strictEqual(inp_name.value + inp_surname.value, '')
+  t.end()
 })
 
-test('updating a selected name changes its entry in the list', ()=> {
-  let streams = initComponent()
-  let li = streams.dom$().querySelectorAll('li')[1]
-  let click = new Event('click')
+test('updating a selected name changes its entry in the list', t => {
+  var streams = initComponent()
+  var li = streams.dom$().querySelectorAll('li')[1]
+  var click = new Event('click')
   li.dispatchEvent(click)
-  let inp_name = streams.dom$().querySelector('input.name')
+  var inp_name = streams.dom$().querySelector('input.name')
   inp_name.value = "Roger"
-  let updateBtn = streams.dom$().querySelector('button.update')
+  var updateBtn = streams.dom$().querySelector('button.update')
   updateBtn.dispatchEvent(click)
-  assert.equal(li.textContent, 'Mustermann, Roger')
+  t.strictEqual(li.textContent, 'Mustermann, Roger')
+  t.end()
 })
 
-test('creating a new name appends it to the list', () => {
-  let streams = initComponent()
-  let li = streams.dom$().querySelectorAll('li')[1]
-  let click = new Event('click')
+test('creating a new name appends it to the list', t => {
+  var streams = initComponent()
+  var li = streams.dom$().querySelectorAll('li')[1]
+  var click = new Event('click')
   li.dispatchEvent(click)
-  let inp_name = streams.dom$().querySelector('input.name')
+  var inp_name = streams.dom$().querySelector('input.name')
   inp_name.value = "Roger"
-  let createBtn = streams.dom$().querySelector('button.create')
+  var createBtn = streams.dom$().querySelector('button.create')
   createBtn.dispatchEvent(click)
-  let newLI = streams.dom$().querySelectorAll('li')[3]
-  assert.equal(newLI.textContent, 'Mustermann, Roger')
+  var newLi = streams.dom$().querySelectorAll('li')[3]
+  t.strictEqual(newLi.textContent, 'Mustermann, Roger')
+  t.end()
 })
 
-test('deleting a selected name removes it from the list', () => {
-  let streams = initComponent()
-  let li = streams.dom$().querySelectorAll('li')[1]
-  let click = new Event('click')
+test('delete a selected name removes it from the list', t => {
+  var streams = initComponent()
+  var li = streams.dom$().querySelectorAll('li')[1]
+  var click = new Event('click')
   li.dispatchEvent(click)
-  let deleteBtn = streams.dom$().querySelector('button.delete')
+  var deleteBtn = streams.dom$().querySelector('button.delete')
   deleteBtn.dispatchEvent(click)
-  let listText = streams.dom$().querySelector('ol').textContent
-  assert.equal(listText, 'Emil, HansTisch, Roman')
+  var listText = streams.dom$().querySelector('ol').textContent
+  t.strictEqual(listText, 'Emil, HansTisch, Roman')
+  t.end()
 })

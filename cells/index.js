@@ -1,12 +1,10 @@
-import R from 'ramda'
-import snabbdom from 'snabbdom'
-import h from 'snabbdom/h'
-import render from 'ff-core/render'
-
-import flyd from 'flyd'
+const R = require('ramda')
+const h = require('flimflam/h')
+const render = require('flimflam/render')
+const flyd = require('flyd')
 
 function init() {
-  let state = {}
+  var state = {}
   return state
 }
 
@@ -16,6 +14,5 @@ function view(state) {
   ])
 }
 
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props'), require('snabbdom/modules/class')])
-render({view, state: init(), container: document.body, patch})
+render(view, init(), document.body)
 module.exports = {init, view}

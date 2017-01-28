@@ -1,14 +1,11 @@
-import snabbdom from 'snabbdom'
-import render from 'ff-core/render'
-import assert from 'assert'
-import {init, view} from '../'
-
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props')])
+const render = require('flimflam/render')
+const test = require('tape')
+const converter = require('../')
 
 function initComponent() {
-  let container = document.createElement('div')
-  let state = init()
-  let streams = render({state, container, patch, view})
+  var container = document.createElement('div')
+  var state = converter.init()
+  var streams = render(converter.view, state, container)
   streams.state = state
   return streams
 }
@@ -20,33 +17,35 @@ function getInputs(dom) {
   }
 }
 
-suite('temperature-converter')
-
-test('212 fahren is 100 celsius', () => {
-  let streams = initComponent()
-  let keyup = new Event('keyup')
-  let {fahrenInput, celsiusInput} = getInputs(streams.dom$())
+test('212 fahren is 100 celsius', t => {
+  var streams = initComponent()
+  var keyup = new Event('keyup')
+  var {fahrenInput, celsiusInput} = getInputs(streams.dom$())
   fahrenInput.value = 212 ; fahrenInput.dispatchEvent(keyup)
-  assert.equal(celsiusInput.value, 100)
+  t.strictEqual(celsiusInput.value, '100')
+  t.end()
 })
-test('32 fahren is 0 celsius', () => {
-  let streams = initComponent()
-  let keyup = new Event('keyup')
-  let {fahrenInput, celsiusInput} = getInputs(streams.dom$())
+test('32 fahren is 0 celsius', t => {
+  var streams = initComponent()
+  var keyup = new Event('keyup')
+  var {fahrenInput, celsiusInput} = getInputs(streams.dom$())
   fahrenInput.value = 32 ; fahrenInput.dispatchEvent(keyup)
-  assert.equal(celsiusInput.value, 0)
+  t.strictEqual(celsiusInput.value, '0')
+  t.end()
 })
-test('0 celsius is 32 fahren', () => {
-  let streams = initComponent()
-  let keyup = new Event('keyup')
-  let {fahrenInput, celsiusInput} = getInputs(streams.dom$())
+test('0 celsius is 32 fahren', t => {
+  var streams = initComponent()
+  var keyup = new Event('keyup')
+  var {fahrenInput, celsiusInput} = getInputs(streams.dom$())
   celsiusInput.value = 0 ; celsiusInput.dispatchEvent(keyup)
-  assert.equal(fahrenInput.value, 32)
+  t.strictEqual(fahrenInput.value, '32')
+  t.end()
 })
-test('100 celsius is 212 fahren', () => {
-  let streams = initComponent()
-  let keyup = new Event('keyup')
-  let {fahrenInput, celsiusInput} = getInputs(streams.dom$())
+test('100 celsius is 212 fahren', t => {
+  var streams = initComponent()
+  var keyup = new Event('keyup')
+  var {fahrenInput, celsiusInput} = getInputs(streams.dom$())
   celsiusInput.value = 100 ; celsiusInput.dispatchEvent(keyup)
-  assert.equal(fahrenInput.value, 212)
+  t.strictEqual(fahrenInput.value, '212')
+  t.end()
 })

@@ -1,19 +1,15 @@
-import snabbdom from 'snabbdom'
-import render from 'ff-core/render'
-import assert from 'assert'
-import {init, view} from '../'
-
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props'), require('snabbdom/modules/class')])
+const render = require('flimflam/render')
+const test = require('tape')
+const cells = require('../')
 
 function initComponent() {
-  let container = document.createElement('div')
-  let state = init()
-  let streams = render({state, container, patch, view})
+  var container = document.createElement('div')
+  var state = cells.init()
+  var streams = render(cells.view, state, container)
   streams.state = state
   return streams
 }
 
-suite('cells')
-
-test('', ()=> {
+test('', t=> {
+  t.end()
 })

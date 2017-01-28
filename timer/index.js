@@ -1,24 +1,10 @@
-import R from 'ramda'
-import h from 'snabbdom/h'
-import snabbdom from 'snabbdom'
-import render from 'ff-core/render'
-
-import flyd from 'flyd'
-import flyd_lift from 'flyd/module/lift'
-import flyd_every from 'flyd/module/every'
-import flyd_flatMap from 'flyd/module/flatmap'
-import flyd_sampleOn from 'flyd/module/sampleon'
-import flyd_scanMerge from 'flyd/module/scanmerge'
-
-window.afterSilence = require('flyd/module/aftersilence')
-window.every = require('flyd/module/every')
-window.flyd = flyd
-window.inlast = require('flyd/module/inlast')
-window.keepWhen = require('flyd/module/keepwhen')
-window.lift = require("flyd/module/lift")
+const R = require('ramda')
+const h = require('flimflam/h')
+const render = require('flimflam/render')
+const flyd = require('flimflam/flyd')
 
 function init() {
-  let state = {change$: flyd.stream(), submit$: flyd.stream()}
+  var state = {change$: flyd.stream(), submit$: flyd.stream()}
   // Stream of maximum duration values in second (from range input)
   state.duration$ = flyd.merge(
     flyd.map(R.prop('value'), state.change$)
@@ -26,23 +12,24 @@ function init() {
   )
 
   // Streams of ticks every 100ms, started and stopped by the submit event
-  const every$ = flyd_flatMap(
-    ()=> flyd.endsOn(state.submit$, flyd_every(100))
+  const every$ = flyd.flatMap(
+    ()=> flyd.endsOn(state.submit$, flyd.every(100))
   , state.submit$ )
   // Sample the current max duration for every tick, for use below
-  const everyDur$ = flyd_sampleOn(every$, state.duration$)
+  const everyDur$ = flyd.sampleOn(every$, state.duration$)
 
   // Stream of second values to one decimal place, incremented by everyDur$ and reset by a submit
-  state.secondsElapsed$ = flyd_scanMerge([
+  state.secondsElapsed$ = flyd.scanMerge([
     [everyDur$, (s, dur) => s < dur ? Number((s + 0.1).toFixed(1)) : s]
   , [state.submit$, ()=> 0]
   ], 0)
   // Stream of percentage of secondsElapsed / duration
-  state.percentageElapsed$ = flyd_lift(percentage, state.secondsElapsed$, state.duration$)
+  state.percentageElapsed$ = flyd.lift(percentage, state.secondsElapsed$, state.duration$)
   return state
 }
 
-const percentage = (x, y) => Math.round(x * 100 / y)
+const percentage = (x, y) => 
+  Math.round(x * 100 / y)
 
 function view(state) {
   return h('body', [
@@ -74,7 +61,6 @@ function view(state) {
   ])
 }
 
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props'), require('snabbdom/modules/style')])
-render({view, state: init(), container: document.body, patch})
+render(view, init(), document.body)
 
 module.exports = {init, view}

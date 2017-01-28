@@ -1,14 +1,12 @@
-import R from 'ramda'
-import snabbdom from 'snabbdom'
-import h from 'snabbdom/h'
-import render from 'ff-core/render'
-import serialize from 'form-serialize'
-import moment from 'moment'
-import flyd from 'flyd'
-import flyd_lift from 'flyd/module/lift'
+const R = require('ramda')
+const h = require('flimflam/h')
+const render = require('flimflam/render')
+const serialize = require('form-serialize')
+const flyd = require('flimflam/flyd')
+const moment = require('moment')
 
 function init() {
-  let state = {
+  var state = {
     type$: flyd.stream('one-way')
   , keyupDeparture$: flyd.stream()
   , keyupReturn$: flyd.stream()
@@ -27,7 +25,7 @@ function init() {
   flyd.map(x => console.log('x', x), state.departureInvalid$)
   state.returnInvalid$ = flyd.map(dateIsInvalid, state.keyupReturn$)
 
-  state.notBeforeReturn$ = flyd_lift(
+  state.notBeforeReturn$ = flyd.lift(
     (ret, dep, type) => type === 'round-trip' && !dep.isBefore(ret)
   , returnDate$
   , departureDate$
@@ -40,7 +38,7 @@ function init() {
 }
 
 function formatSuccessMessage(data) {
-  let prefix = `You have booked a ${data.type} flight`
+  var prefix = `You have booked a ${data.type} flight`
   return data.type === 'round-trip'
     ? `${prefix}, departing ${data.departureDate} and returning ${data.returnDate}`
     : `${prefix} for ${data.departureDate}`
@@ -87,13 +85,6 @@ function view(state) {
 }
 
 
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props'), require('snabbdom/modules/class')])
-
-render({
-  container: document.body
-, state: init()
-, patch, view
-})
-
+render(view, init(), document.body)
 module.exports = {init, view}
 

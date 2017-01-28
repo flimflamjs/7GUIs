@@ -1,0 +1,7 @@
+require('../cells/test')
+require('../circle-drawer/test')
+require('../converter/test')
+require('../counter/test')
+require('../crud/test')
+require('../flight-booker/test')
+require('../timer/test')

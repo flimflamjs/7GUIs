@@ -1,16 +1,13 @@
-import R from 'ramda'
-import snabbdom from 'snabbdom'
-import h from 'snabbdom/h'
-import render from 'ff-core/render'
-import flyd_undo from 'flyd-undo'
-import flyd_filter from 'flyd/module/filter'
-import flyd_lift from 'flyd/module/lift'
-import flyd from 'flyd'
+const R = require('ramda')
+const h = require('flimflam/h')
+const render = require('flimflam/render')
+const flyd = require('flimflam/flyd')
+flyd.undo = require('flyd-undo')
 
 const defaultRadius = 50
 
 function init() {
-  let state = {
+  var state = {
     clickSvg$: flyd.stream()
   , changeRadius$: flyd.stream()
   , clickUndo$: flyd.stream()
@@ -18,13 +15,13 @@ function init() {
   }
 
   // Filter out clicks on existing circles
-  const clickBlankSvg$ = flyd_filter(
+  const clickBlankSvg$ = flyd.filter(
     ev => ev.target.tagName === 'svg'
   , state.clickSvg$
   )
   
   // Clicks on an actual circle svg element
-  const clickCircle$ = flyd_filter(
+  const clickCircle$ = flyd.filter(
     ev => ev.target.tagName === 'circle'
   , state.clickSvg$
   )
@@ -33,7 +30,7 @@ function init() {
   const newCircle$ = flyd.map(createCircle, clickBlankSvg$)
 
   // Flyd undo stateful history of a stream of arrays of circle objects
-  state.circles$ = flyd_undo({
+  state.circles$ = flyd.undo({
     default: []
   , undo: state.clickUndo$
   , redo: state.clickRedo$
@@ -50,7 +47,7 @@ function init() {
   )
 
   // Stream of the currently selected circle object
-  state.selectedCircle$ = flyd_lift(
+  state.selectedCircle$ = flyd.lift(
     (id, circles) => findCirc(id, circles.current)
   , selectedID$
   , state.circles$
@@ -110,8 +107,7 @@ const circleNode = selected => attrs =>
 
 
 // Init snabbdom and render everything to the page
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props'), require('snabbdom/modules/attributes'), require('snabbdom/modules/class')])
-render({view, state: init(), container: document.body, patch})
+render(view, init(), document.body)
 
 // Like any other component, export the state init function and the top view function
 module.exports = {init, view}

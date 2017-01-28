@@ -1,10 +1,9 @@
-import flyd from 'flyd'
-import h from 'snabbdom/h'
-import snabbdom from 'snabbdom'
-import render from 'ff-core/render'
+const flyd = require('flimflam/flyd')
+const h = require('flimflam/h')
+const render = require('flimflam/render')
 
 function init() {
-  let state = {
+  var state = {
     changeCelsius$: flyd.stream()
   , changeFahren$: flyd.stream()
   }
@@ -36,7 +35,6 @@ function view(state) {
   ])
 }
 
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props')])
-render({container: document.body, state: init(), patch, view})
+render(view, init(), document.body)
 
 module.exports = {init, view}

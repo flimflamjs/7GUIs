@@ -1,8 +1,7 @@
-import h from 'snabbdom/h'
-import R from 'ramda'
-import flyd from 'flyd'
-import render from 'ff-core/render'
-import snabbdom from 'snabbdom'
+const R = require('ramda')
+const h = require('flimflam/h')
+const flyd = require('flimflam/flyd')
+const render = require('flimflam/render')
 
 // The add$ stream constitutes the button clicks that increment
 // The sum$ steam constitutes the running sum, starting with 0, incremented by add$
@@ -19,10 +18,7 @@ function view(state) {
   ])
 }
 
-const patch = snabbdom.init([ require('snabbdom/modules/eventlisteners') ])
-
-render({ view, patch, container: document.body, state: init()})
-
+render(view, init(), document.body)
 
 module.exports = {view, init}
 

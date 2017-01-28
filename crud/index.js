@@ -1,21 +1,14 @@
-import R from 'ramda'
-import snabbdom from 'snabbdom'
-import h from 'snabbdom/h'
-import render from 'ff-core/render'
-import serialize from 'form-serialize'
+const R = require('ramda')
+const h = require('flimflam/h')
+const render = require('flimflam/render')
+const serialize = require('form-serialize')
 
-import flyd from 'flyd'
-import flyd_lift from 'flyd/module/lift'
-import flyd_filter from 'flyd/module/filter'
-import flyd_sampleOn from 'flyd/module/sampleon'
-import flyd_scanMerge from 'flyd/module/scanmerge'
+const flyd = require('flimflam/flyd')
 
 R.map = R.addIndex(R.map)
 
-const log$ = flyd.map(console.log.bind(console))
-
 function init() {
-  let state = {
+  var state = {
     filter$: flyd.stream('')
   , selectedName$: flyd.stream()
   , clickCreate$: flyd.stream()
@@ -26,29 +19,32 @@ function init() {
   // Composition of functions to take a create/update action and make it into a valid name
   const dataToSave = R.compose(
     flyd.map(obj => obj.surname + ', ' + obj.name)
-  , flyd_filter(obj => obj.surname && obj.name) // reject blanks
+  , flyd.filter(obj => obj.surname && obj.name) // reject blanks
   , flyd.map(getFormData) // form -> object
   )
   const toCreate$ = dataToSave(state.clickCreate$)
   // Sample from the currently selected name on every delete click
-  const toDelete$ = flyd_sampleOn(state.clickDelete$, state.selectedName$)
+  const toDelete$ = flyd.sampleOn(state.clickDelete$, state.selectedName$)
   // Get a pair of currently selected name and new name to update on every update click
-  const toUpdate$ = flyd_lift(
+  const toUpdate$ = flyd.lift(
     R.pair
-  , flyd_sampleOn(state.clickUpdate$, state.selectedName$)
+  , flyd.sampleOn(state.clickUpdate$, state.selectedName$)
   , dataToSave(state.clickUpdate$)
   )
   const defaultNames = ['Emil, Hans', 'Mustermann, Max', 'Tisch, Roman']
-  const names$ = flyd_scanMerge([
+  const names$ = flyd.scanMerge([
     [toCreate$, (names, n) => R.append(n, names)]
-  , [toUpdate$, (names, [oldName, newName]) => R.findAndUpdate(n => n === oldName, newName, names)]
-  , [toDelete$, (names, idx) => R.findAndREmove(idx, 1, names)]
+  , [toUpdate$, (names, [oldName, newName]) => findAndUpdate(n => n === oldName, newName, names)]
+  , [toDelete$, (names, idx) => R.remove(idx, 1, names)]
   ], defaultNames)
 
-  state.filteredNames$ = flyd_lift(filter, names$, state.filter$)
+  state.filteredNames$ = flyd.lift(filter, names$, state.filter$)
 
   return state
 }
+
+const findAndUpdate = (pred, newVal, arr) =>
+  R.update(R.find(pred, arr), newVal, arr)
 
 // Get the form from the button click, then convert the form into an object, using the form-serialize module
 const getFormData = ev =>
@@ -84,7 +80,7 @@ function searchFilter(state) {
 }
 
 function fields(state) {
-  const selected = R.find(R.equals(state.selectedName$()), state.filteredNames$())
+  const selected = R.find(R.equals(state.selectedName$()), state.filteredNames$()) || ''
   return h('div', [
     h('div', [
       h('label', 'Name: ')
@@ -123,7 +119,6 @@ const nameOption = state => (name, idx) => {
   }, name)
 }
 
-const patch = snabbdom.init([require('snabbdom/modules/eventlisteners'), require('snabbdom/modules/props'), require('snabbdom/modules/class')])
-render({view, state: init(), container: document.body, patch})
+render(view, init(), document.body)
 
 module.exports = {init, view}

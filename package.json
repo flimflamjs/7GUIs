@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test" : "browserify -t es2040 test/index.js | tape-run --render=tap-spec"
   },
   "repository": {
     "type": "git",
@@ -24,17 +24,17 @@
   },
   "homepage": "https://github.com/flimflamjs/7GUIs#readme",
   "dependencies": {
-    "ff-core": "0.0.4",
-    "flyd": "0.2.2",
-    "ramda": "0.22.1",
-    "snabbdom": "0.5.4"
+    "flimflam": "0.0.2",
+    "flyd-undo": "0.0.1",
+    "moment": "2.17.1",
+    "ramda": "0.23.0"
   },
   "devDependencies": {
-    "babel": "6.5.2",
-    "babelify": "7.3.0",
     "browserify": "13.1.1",
     "budo": "9.2.2",
-    "mocha": "3.1.2",
-    "zuul": "3.11.1"
+    "es2040": "1.2.4",
+    "tap-spec": "4.1.1",
+    "tape": "4.6.3",
+    "tape-run": "2.1.5"
   }
 }

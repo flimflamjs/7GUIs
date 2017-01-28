@@ -1,6 +1,5 @@
 const R = require('ramda')
 const h = require('flimflam/h')
-const render = require('flimflam/render')
 const serialize = require('form-serialize')
 const flyd = require('flimflam/flyd')
 const moment = require('moment')
@@ -16,13 +15,12 @@ function init() {
   // Convert input change event obj to moment date
   const toMoment = ev => moment(ev.currentTarget.value, 'DD.MM.YYYY', true)
   // Validate that an input change event has a valid date
-  const dateIsInvalid = ev => ev.currentTarget.value && !toMoment(ev).isValid()
+  const dateIsInvalid = ev => !ev || !ev.currentTarget.value || !toMoment(ev).isValid()
   // Stream of departure dates entered by the user
   const departureDate$ = flyd.map(toMoment, state.keyupDeparture$)
   // Stream of return dates entered by the user
   const returnDate$ = flyd.map(toMoment, state.keyupReturn$)
-  state.departureInvalid$ = flyd.map(dateIsInvalid, state.keyupDeparture$)
-  flyd.map(x => console.log('x', x), state.departureInvalid$)
+  state.departureInvalid$ = flyd.immediate(flyd.map(dateIsInvalid, state.keyupDeparture$))
   state.returnInvalid$ = flyd.map(dateIsInvalid, state.keyupReturn$)
 
   state.notBeforeReturn$ = flyd.lift(
@@ -30,7 +28,6 @@ function init() {
   , returnDate$
   , departureDate$
   , state.type$ )
-  flyd.map(console.log.bind(console), state.notBeforeReturn$)
 
   const formData$ = flyd.map(form => serialize(form, {hash: true}), state.submit$)
   state.successMessage$ = flyd.map(formatSuccessMessage, formData$)
@@ -45,7 +42,7 @@ function formatSuccessMessage(data) {
 }
 
 function view(state) {
-  return h('body', [
+  return h('div', [
     h('form', {
       on: {submit: ev => {ev.preventDefault(); state.submit$(ev.currentTarget)}}
     }, [
@@ -53,15 +50,15 @@ function view(state) {
         on: {change: ev => state.type$(ev.currentTarget.value)}
       , props: {name: 'type'}
       }, [
-        h('option', {props: {value: 'one-way'}}, 'one-way flight')
-      , h('option', {props: {value: 'round-trip'}}, 'return flight')
+        h('option', {props: {value: 'one-way'}}, 'One-way flight')
+      , h('option', {props: {value: 'round-trip'}}, 'Return flight')
       ])
     , h('br')
     , h('input.departureDate', {
         props: {
           name: 'departureDate'
         , type: 'text'
-        , placeholder: 'Departure date (DD.MM.YYYY)'
+        , placeholder: 'Depart date (DD.MM.YYYY)'
         }
       , class: {red: state.departureInvalid$()}
       , on: {keyup: state.keyupDeparture$}
@@ -84,7 +81,5 @@ function view(state) {
   ])
 }
 
-
-render(view, init(), document.body)
 module.exports = {init, view}
 

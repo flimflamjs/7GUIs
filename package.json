@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "test" : "browserify -t es2040 test/index.js | tape-run --render=tap-spec"
+    "test": "browserify -t es2040 test/index.js | tape-run --render=tap-spec",
+    "demo": "(cd docs; budo --live --css index.css index.js -- -t es2040)",
+    "demo-css": "(cd docs; postcss -c postcss-config.json)"
   },
   "repository": {
     "type": "git",
@@ -30,9 +32,12 @@
     "ramda": "0.23.0"
   },
   "devDependencies": {
+    "basscss": "8.0.3",
     "browserify": "13.1.1",
     "budo": "9.2.2",
     "es2040": "1.2.4",
+    "ff-docs-theme": "https://github.com/flimflamjs/docs-theme.git",
+    "postcss-import": "9.1.0",
     "tap-spec": "4.1.1",
     "tape": "4.6.3",
     "tape-run": "2.1.5"

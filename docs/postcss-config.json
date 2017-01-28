@@ -1,0 +1,5 @@
+{
+  "use": ["postcss-import"],
+  "output": "build.css",
+  "input": "index.css"
+}

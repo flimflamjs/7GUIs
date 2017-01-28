@@ -1,6 +1,5 @@
 const R = require('ramda')
 const h = require('flimflam/h')
-const render = require('flimflam/render')
 const serialize = require('form-serialize')
 
 const flyd = require('flimflam/flyd')
@@ -9,11 +8,11 @@ R.map = R.addIndex(R.map)
 
 function init() {
   var state = {
-    filter$: flyd.stream('')
+    filter$:       flyd.stream('')
   , selectedName$: flyd.stream()
-  , clickCreate$: flyd.stream()
-  , clickUpdate$: flyd.stream()
-  , clickDelete$: flyd.stream()
+  , clickCreate$:  flyd.stream()
+  , clickUpdate$:  flyd.stream()
+  , clickDelete$:  flyd.stream()
   }
 
   // Composition of functions to take a create/update action and make it into a valid name
@@ -57,9 +56,8 @@ function filter(names, searchWord) {
   return R.filter(n => n.toLowerCase().split(', ')[0].indexOf(searchWord) !== -1, names)
 }
 
-
 function view(state) {
-  return h('body', [
+  return h('div', [
     searchFilter(state)
   , h('form', {on: {submit: ev => {ev.preventDefault(); ev.stopPropagation();}}}, [
       h('ol', R.map(nameOption(state), state.filteredNames$()))
@@ -118,7 +116,5 @@ const nameOption = state => (name, idx) => {
   , class: {selected: isMatched}
   }, name)
 }
-
-render(view, init(), document.body)
 
 module.exports = {init, view}

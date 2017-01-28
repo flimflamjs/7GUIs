@@ -1,6 +1,5 @@
 const R = require('ramda')
 const h = require('flimflam/h')
-const render = require('flimflam/render')
 const flyd = require('flimflam/flyd')
 
 function init() {
@@ -32,7 +31,7 @@ const percentage = (x, y) =>
   Math.round(x * 100 / y)
 
 function view(state) {
-  return h('body', [
+  return h('div', [
     h('p', 'Elapsed Time:')
   , h('div.gauge', {
       style: {height: '20px', width: '200px', overflow: 'hidden', background: '#ddd'}
@@ -60,7 +59,5 @@ function view(state) {
     ])
   ])
 }
-
-render(view, init(), document.body)
 
 module.exports = {init, view}

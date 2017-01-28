@@ -9,7 +9,8 @@
   "scripts": {
     "test": "browserify -t es2040 test/index.js | tape-run --render=tap-spec",
     "demo": "(cd docs; budo --live --css index.css index.js -- -t es2040)",
-    "demo-css": "(cd docs; postcss -c postcss-config.json)"
+    "demo-css": "(cd docs; postcss -c postcss-config.json)",
+    "demo-build": "(cd docs; browserify -t es2040 index.js > build.js)"
   },
   "repository": {
     "type": "git",

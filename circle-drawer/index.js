@@ -1,6 +1,5 @@
 const R = require('ramda')
 const h = require('flimflam/h')
-const render = require('flimflam/render')
 const flyd = require('flimflam/flyd')
 flyd.undo = require('flyd-undo')
 
@@ -84,30 +83,36 @@ function view(state) {
   const circles = state.circles$().current
   const selected = state.selectedCircle$() || {}
   const circleNodes = R.map(circleNode(selected), circles)
-  return h('body', [
+  return h('div', [
     h('button', {on: {click: state.clickUndo$}, props: {disabled: !state.circles$().backward.length}}, 'Undo')
   , h('button', {on: {click: state.clickRedo$}, props: {disabled: !state.circles$().forward.length}}, 'Redo')
   , h('div')
   , h('div.radiusDialog', {
       class: {'is-hidden': !selected.id}
     }, [
-      h('label', `Radius (${selected.r})`)
+      h('label', `Radius (${selected.r || 50})`)
     , h('input', {props: {type: 'range', name: 'radius', value: Number(selected.r), min: 1, max: 100}, on: {change: ev => state.changeRadius$([ev, selected])}})
     ])
-  , h('svg', {attrs: {width: 500, height: 500}, on: {click: state.clickSvg$}}, circleNodes)
+  , h('svg', {
+      attrs: {
+        width: 500
+      , height: 500
+      }
+    , on: {click: state.clickSvg$}
+    , style: {background: '#f8f8f8'}
+    }
+    , circleNodes
+    )
   ])
 }
 
 // A single svg circle element
 const circleNode = selected => attrs =>
   h('circle', {
-    attrs
-  , class: {'is-selected': Number(selected.id) === Number(attrs.id)}
+    attrs: R.merge(attrs, {
+      fill: Number(selected.id) === Number(attrs.id) ? '#888' : '#d8d8d8'
+    })
   })
 
 
-// Init snabbdom and render everything to the page
-render(view, init(), document.body)
-
-// Like any other component, export the state init function and the top view function
 module.exports = {init, view}

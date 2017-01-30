@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "browserify -t es2040 test/index.js | tape-run --render=tap-spec",
-    "demo": "(cd docs; budo --live --css index.css index.js -- -t es2040)",
-    "demo-css": "(cd docs; postcss -c postcss-config.json)",
-    "demo-build": "(cd docs; browserify -t es2040 index.js > build.js)"
+    "demo": "(cd docs-src; budo index.js --live -- -t es2040)",
+    "demo-css": "(cd docs-src; postcss -c postcss-config.json)",
+    "demo-build": "(browserify -t es2040 docs-src/index.js > docs/index.js; cp docs-src/build.css docs/build.css)"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,8 @@
     "flimflam": "0.0.2",
     "flyd-undo": "0.0.1",
     "moment": "2.17.1",
-    "ramda": "0.23.0"
+    "ramda": "0.23.0",
+    "uuid": "3.0.1"
   },
   "devDependencies": {
     "basscss": "8.0.3",

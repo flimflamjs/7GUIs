@@ -7,6 +7,7 @@ const booker = require('../flight-booker')
 const timer = require('../timer')
 const crud = require('../crud')
 const circles = require('../circle-drawer')
+const cells = require('../cells')
 
 const init = () => {
   return {
@@ -16,6 +17,7 @@ const init = () => {
   , timer: timer.init()
   , crud: crud.init()
   , circles: circles.init()
+  , cells: cells.init()
   }
 }
 
@@ -43,7 +45,7 @@ const view = state => {
   , h('h2', '6. Circle Drawer')
   , circles.view(state.circles)
   , h('h2', '7. Cells')
-  , h('p', 'todo')
+  , cells.view(state.cells)
   ])
 }
 
